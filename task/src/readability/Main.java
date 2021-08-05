@@ -12,7 +12,7 @@ public class Main {
 
         int numOfWords = inText.split("\\s").length;
         //String[] words = inText.split("\\s");
-        String[] words = inText.replaceAll("[\\.!,]", "").split("\\s");
+        String[] words = inText.replaceAll("[.!,]", "").split("\\s");
         int numOfSentences = inText.split("[.!?]").length;
         int numOfCharacters = inText.replaceAll("\\s+", "").length();
         int numOfSyllables = countSyllables(words);
@@ -52,13 +52,19 @@ public class Main {
                 fkScore = getFKScore(numOfWords, numOfSentences, numOfSyllables);
                 smogScore = getSMOGScore(numOfSentences, numOfPolySyllables);
                 clScore = getCLScore(numOfWords, numOfSentences, numOfCharacters);
-                double average = (calculateAge(ariScore) + calculateAge(fkScore) + calculateAge(smogScore) + calculateAge(clScore + 1)) / 4.0;
-                System.out.println("Automated Readability Index: " + String.format("%.2f", ariScore) + " (about " + calculateAge(ariScore) + "-year-olds).");
-                System.out.println("Flesch–Kincaid readability tests: " + String.format("%.2f", fkScore) + " (about " + calculateAge(fkScore) + "-year-olds).");
-                System.out.println("Simple Measure of Gobbledygook: " + String.format("%.2f", smogScore) + " (about " + calculateAge(smogScore) + "-year-olds).");
-                System.out.println("Coleman–Liau index: " + String.format("%.2f", clScore) + " (about " + calculateAge(clScore + 1) + "-year-olds).");
+                double average = (calculateAge(ariScore) + calculateAge(fkScore) + calculateAge(smogScore) +
+                        calculateAge(clScore + 1)) / 4.0;
+                System.out.println("Automated Readability Index: " + String.format("%.2f", ariScore) +
+                        " (about " + calculateAge(ariScore) + "-year-olds).");
+                System.out.println("Flesch–Kincaid readability tests: " + String.format("%.2f", fkScore) +
+                        " (about " + calculateAge(fkScore) + "-year-olds).");
+                System.out.println("Simple Measure of Gobbledygook: " + String.format("%.2f", smogScore) +
+                        " (about " + calculateAge(smogScore) + "-year-olds).");
+                System.out.println("Coleman–Liau index: " + String.format("%.2f", clScore) +
+                        " (about " + calculateAge(clScore + 1) + "-year-olds).");
                 System.out.println();
-                System.out.println("This text should be understood in average by  " + String.format("%.2f", average) + "-year-olds.");
+                System.out.println("This text should be understood in average by  " + String.format("%.2f", average) +
+                        "-year-olds.");
                 break;
             default:
                 break;
