@@ -1,16 +1,74 @@
 package readability;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        StringBuilder sb = new StringBuilder();
-        int numOfWords = 0;
-        int numOfSentences = 0;
-        int numOfCharacters = 0;
+        final Scanner scanner = new Scanner(System.in);
+        String inText = getText(args[0]);
 
+        int numOfWords = inText.split("\\s").length;
+        //String[] words = inText.split("\\s");
+        String[] words = inText.replaceAll("[\\.!,]", "").split("\\s");
+        int numOfSentences = inText.split("[.!?]").length;
+        int numOfCharacters = inText.replaceAll("\\s+", "").length();
+        int numOfSyllables = countSyllables(words);
+        int numOfPolySyllables = countPolySyllables(words);
+
+        System.out.println("Words: " + numOfWords);
+        System.out.println("Sentences: " + numOfSentences);
+        System.out.println("Characters: " + numOfCharacters);
+        System.out.println("Syllables: " + numOfSyllables);
+        System.out.println("Polysyllables: " + numOfPolySyllables);
+        System.out.println("Enter the score you want to calculate (ARI, FK, SMOG, CL, all): ");
+        String choice = scanner.nextLine().toUpperCase();
+        scanner.close();
+        switch (choice) {
+            case "ARI":
+                double ariScore = getARIScore(numOfWords, numOfSentences, numOfCharacters);
+                System.out.println("The score is: " + String.format("%.2f", ariScore));
+                System.out.println("This text should be understood by " + calculateAge(ariScore) + "-year-olds.");
+                break;
+            case "FK":
+                double fkScore = getFKScore(numOfWords, numOfSentences, numOfSyllables);
+                System.out.println("The score is: " + String.format("%.2f", fkScore));
+                System.out.println("This text should be understood by " + calculateAge(fkScore) + "-year-olds.");
+                break;
+            case "SMOG":
+                double smogScore = getSMOGScore(numOfSentences, numOfPolySyllables);
+                System.out.println("The score is: " + String.format("%.2f", smogScore));
+                System.out.println("This text should be understood by " + calculateAge(smogScore) + "-year-olds.");
+                break;
+            case "CL":
+                double clScore = getCLScore(numOfWords, numOfSentences, numOfCharacters);
+                System.out.println("The score is: " + String.format("%.2f", clScore));
+                System.out.println("This text should be understood by " + calculateAge(clScore) + "-year-olds.");
+                break;
+            case "ALL":
+                ariScore = getARIScore(numOfWords, numOfSentences, numOfCharacters);
+                fkScore = getFKScore(numOfWords, numOfSentences, numOfSyllables);
+                smogScore = getSMOGScore(numOfSentences, numOfPolySyllables);
+                clScore = getCLScore(numOfWords, numOfSentences, numOfCharacters);
+                double average = (calculateAge(ariScore) + calculateAge(fkScore) + calculateAge(smogScore) + calculateAge(clScore + 1)) / 4.0;
+                System.out.println("Automated Readability Index: " + String.format("%.2f", ariScore) + " (about " + calculateAge(ariScore) + "-year-olds).");
+                System.out.println("Flesch–Kincaid readability tests: " + String.format("%.2f", fkScore) + " (about " + calculateAge(fkScore) + "-year-olds).");
+                System.out.println("Simple Measure of Gobbledygook: " + String.format("%.2f", smogScore) + " (about " + calculateAge(smogScore) + "-year-olds).");
+                System.out.println("Coleman–Liau index: " + String.format("%.2f", clScore) + " (about " + calculateAge(clScore + 1) + "-year-olds).");
+                System.out.println();
+                System.out.println("This text should be understood in average by  " + String.format("%.2f", average) + "-year-olds.");
+                break;
+            default:
+                break;
+        }
+    }
+
+    public static String getText(String path) {
+        StringBuilder sb = new StringBuilder();
         try {
-            FileReader inputFile = new FileReader(args[0]);
+            FileReader inputFile = new FileReader(path);
             BufferedReader br = new BufferedReader(inputFile);
             String line;
             while ((line = br.readLine()) != null) {
@@ -19,80 +77,59 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String inText = sb.toString();
-        numOfWords = inText.split("\\s").length;
-        numOfSentences = inText.split("[.!?]").length;
-        numOfCharacters = inText.replaceAll("\\s+", "").length();
+        return sb.toString();
+    }
 
-        double score = 4.71 * numOfCharacters / numOfWords + 0.5 * numOfWords / numOfSentences - 21.43;
-        int sc = (int) Math.ceil(score);
+    public static int countSyllablesRegex(String word) {
+        return Math.max(1, word.toLowerCase()
+                .replaceAll("e$", "")
+                .replaceAll("[aeiouy]{2,}", "a")
+                .replaceAll("[^aeiouy]", "")
+                .length());
+    }
 
-        String age = "";
+    public static int countSyllables(String[] words) {
+        int count = 0;
 
-        switch (sc) {
-            case 1:
-                age = "5-6-year-olds.";
-                break;
-            case 2:
-                age = "6-7-year-olds.";
-                break;
-            case 3:
-                age = "7-9-year-olds.";
-                break;
-            case 4:
-                age = "9-10-year-olds.";
-                break;
-            case 5:
-                age = "10-11-year-olds.";
-                break;
-            case 6:
-                age = "11-12-year-olds.";
-                break;
-            case 7:
-                age = "12-13-year-olds.";
-                break;
-            case 8:
-                age = "13-14-year-olds.";
-                break;
-            case 9:
-                age = "14-15-year-olds.";
-                break;
-            case 10:
-                age = "15-16-year-olds.";
-                break;
-            case 11:
-                age = "16-17-year-olds.";
-                break;
-            case 12:
-                age = "17-18-year-olds.";
-                break;
-            case 13:
-                age = "18-24-year-olds.";
-                break;
-            case 14:
-                age = "24-year-olds.";
-                break;
-            default:
-                break;
+        for (String word : words) {
+            count += countSyllablesRegex(word);
         }
+        return count;
+    }
 
-        System.out.println("Words: " + numOfWords);
-        System.out.println("Sentences: " + numOfSentences);
-        System.out.println("Characters: " + numOfCharacters);
-        System.out.println("The score is: " + String.format("%.2f", score));
-        System.out.println("This text should be understood by " + age);
+    public static int countPolySyllables(String[] words) {
+        int count = 0;
 
-        //final Scanner scanner = new Scanner(inputFile);
-        //String inputText = scanner.nextLine();
-        //String[] phrases = inputText.split("\\.|!|\\?");
+        for (String word : words) {
+            int syllables = countSyllablesRegex(word);
+            if (syllables > 2) {
+                count++;
+            }
+        }
+        return count;
+    }
 
-        //int textSize = phrases.length;
-        //double numOfWords = 0;
+    public static double getARIScore(int numWords, int numSentences, int numChars) {
+        return 4.71 * numChars / numWords + 0.5 * numWords / numSentences - 21.43;
+    }
 
-        //for (int i = 0; i < textSize; i++) {
-            //numOfWords += phrases[i].trim().split(" ").length;
-        //}
+    public static double getFKScore(int numWords, int numSentences, int numSyllables) {
+        return 0.39 * numWords / numSentences + 11.8 * numSyllables / numWords - 15.59;
+    }
 
-        //System.out.print(numOfWords / textSize > 10 ? "HARD" : "EASY");
+    public static double getSMOGScore(int numSentences, int numPolySyllables) {
+        return 1.043 * Math.sqrt(numPolySyllables * 30.0 / numSentences) + 3.1291;
+    }
+
+    public static double getCLScore(int numWords, int numSentences, int numChars) {
+        double S = (double) numSentences / (double) numWords * 100;
+        double L = (double) numChars / (double) numWords * 100;
+
+        return 0.0588 * L - 0.296 * S - 15.8;
+    }
+
+    public static int calculateAge(double score) {
+        int level = Math.min(14, Math.max(1, (int) Math.ceil(score))) - 2;
+        return new int[]{6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 24, 25}[level];
     }
 }
