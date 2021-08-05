@@ -81,7 +81,7 @@ public class Main {
                 sb.append(line);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         return sb.toString();
     }

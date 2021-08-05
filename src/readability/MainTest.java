@@ -1,6 +1,9 @@
 package readability;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -10,40 +13,65 @@ import static org.junit.jupiter.api.Assertions.*;
 class MainTest {
 
     @Test
+    void main() {
+
+    }
+
+    @Test
     void getText() {
+        assertEquals("expected result", Main.getText("in.txt"));
+//        Exception exception = assertThrows(IOException.class, () -> Main.getText("into.txt"));
+//        assertEquals("expected result", exception.getMessage());
     }
 
     @Test
     void countSyllablesRegex() {
+        assertEquals(1, Main.countSyllablesRegex("the"));
+        assertEquals(4, Main.countSyllablesRegex("disfranchised"));
+        assertEquals(1, Main.countSyllablesRegex("rain"));
+        assertEquals(1, Main.countSyllablesRegex("since"));
+        assertEquals(3, Main.countSyllablesRegex("eloquent"));
     }
 
-    String[] words = {"disfranchised"};
+    String[] words = {"disfranchised", "rain", "room", "eloquent"};
     @Test
-    void countSyllables(String[] words) {
-        assertEquals(5, countSyllables(words));
+    void countSyllables() {
+        assertEquals(9, Main.countSyllables(words));
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void countPolySyllables() {
+        assertEquals(2, Main.countPolySyllables(words));
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void getARIScore() {
+        assertEquals(7.081616266944735, Main.getARIScore(137, 14, 687));
+        assertEquals(28.42285714285714, Main.getARIScore(157, 35, 1587));
+        assertEquals(16.938377077865262, Main.getARIScore(127, 36, 987));
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void getFKScore() {
+        assertEquals(6.314019812304483, Main.getFKScore(137, 14, 210));
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void getSMOGScore() {
+        assertEquals(9.424239791934728, Main.getSMOGScore(14, 17));
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void getCLScore() {
+        assertEquals(10.661021897810219, Main.getCLScore(137, 14, 687));
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void calculateAge() {
+        assertEquals(16, Main.calculateAge(10.66));
+        assertEquals(13, Main.calculateAge(7.8));
+        assertEquals(12, Main.calculateAge(6.31));
+        assertEquals(15, Main.calculateAge(9.42));
+        assertEquals(24, Main.calculateAge(15.6));
     }
 }
